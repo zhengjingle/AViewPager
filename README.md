@@ -1,5 +1,5 @@
 # AViewPager
-ViewPager的代码品
+ViewPager的代替品
 
 
 设置items
