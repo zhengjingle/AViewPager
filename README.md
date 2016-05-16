@@ -5,15 +5,15 @@ ViewPager的代码品
 
 addItemList(LinkedList<View> viewList)
 
-设置某一个item
+替换item
 
 setItem(int position,View view)
 
-插入一个item
+增加item
 
 addItem(int position,View view)
 
-删除一个item
+删除item
 
 removeItem(int position)
 
@@ -21,10 +21,10 @@ removeItem(int position)
 
 setOrientation(int orientation)
 
-选择某一个item
+选择item
 
 setCurrentItem(int position)
 
-选择某一个item，还可带动画
+选择item，带动画
 
 setCurrentItem(int position, int outAnim, int inAnim)
