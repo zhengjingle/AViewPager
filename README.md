@@ -21,5 +21,6 @@ setOrientation(int orientation)
 
 选择某一个item
 setCurrentItem(int position)
+
 选择某一个item，还可带动画
 setCurrentItem(int position, int outAnim, int inAnim)
