@@ -4,6 +4,7 @@ package com.example.aviewpager;
 import java.util.LinkedList;
 
 import com.zjl.customview.AViewPager;
+import com.zjl.customview.AViewPager.OnPageChangeListener;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -30,6 +31,25 @@ public class MainActivity extends Activity implements OnClickListener {
 		initViews();
 		aViewPager.setCurrentItem(0);
 		aViewPager.setOrientation(AViewPager.HORIZONTAL);
+		aViewPager.setOnPageChangeListener(new OnPageChangeListener(){
+
+			@Override
+			public void onPageSelected(int position) {
+				
+			}
+
+			@Override
+			public void onPageScrolled(int position, float positionOffset,
+					int positionOffsetPixels) {
+				
+			}
+
+			@Override
+			public void onPageScrollStateChanged(int state) {
+				
+			}
+			
+		});
 		
 		rb_h=(RadioButton)findViewById(R.id.radio0);
 		rb_v=(RadioButton)findViewById(R.id.radio1);
@@ -47,7 +67,7 @@ public class MainActivity extends Activity implements OnClickListener {
 		button3.setOnClickListener(this);
 		button4.setOnClickListener(this);
 		
-		//模拟插入
+		//妯℃嫙鎻掑叆
 		new Thread(){
 			public void run(){
 				for(int i=0;i<10;i++){
@@ -58,7 +78,7 @@ public class MainActivity extends Activity implements OnClickListener {
 			}
 		}.start();
 		
-		//模拟删除
+		//妯℃嫙鍒犻櫎
 		new Thread(){
 			public void run(){
 				for(int i=0;i<10;i++){
@@ -100,7 +120,6 @@ public class MainActivity extends Activity implements OnClickListener {
 
 	@Override
 	public void onClick(View v) {
-		// TODO 自动生成的方法存根
 		switch(v.getId()){
 		case R.id.radio0:
 			aViewPager.setOrientation(AViewPager.HORIZONTAL);

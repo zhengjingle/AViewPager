@@ -1,6 +1,7 @@
 package com.zjl.customview;
 
 import java.util.LinkedList;
+
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
@@ -22,19 +23,16 @@ public class AViewPager extends FrameLayout{
 	
 	public AViewPager(Context context) {
 		super(context);
-		// TODO 自动生成的构造函数存根
 		this.context=context;
 	}
 
 	public AViewPager(Context context, AttributeSet attrs) {
 		super(context, attrs);
-		// TODO 自动生成的构造函数存根
 		this.context=context;
 	}
 
 	public AViewPager(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
-		// TODO 自动生成的构造函数存根
 		this.context=context;
 	}
 	
@@ -107,7 +105,7 @@ public class AViewPager extends FrameLayout{
 	
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
-		// TODO 自动生成的方法存根
+		
 		if(viewList==null || viewList.size()==0)return false;
 		
 		synchronized (viewList) {
@@ -115,16 +113,19 @@ public class AViewPager extends FrameLayout{
 			if (action == MotionEvent.ACTION_DOWN) {
 				downPoint[0] = event.getX();
 				downPoint[1] = event.getY();
-
+				
 			} else if (action == MotionEvent.ACTION_UP) {
 				downPoint[0] = 0;
 				downPoint[1] = 0;
-
+				
 				if (willSelectedPosition > -1) {
 					setCurrentItem(willSelectedPosition);
 					willSelectedPosition = -1;
 				}
-
+				
+				if(onPageChangeListener!=null){
+	    			onPageChangeListener.onPageScrollStateChanged(OnPageChangeListener.SCROLL_STATE_SETTLING);
+				}
 			} else if (action == MotionEvent.ACTION_MOVE) {
 
 				if (orientation == HORIZONTAL) {
@@ -136,13 +137,22 @@ public class AViewPager extends FrameLayout{
 				} else {
 
 				}
+				
+				if(onPageChangeListener!=null){
+					onPageChangeListener.onPageScrollStateChanged(OnPageChangeListener.SCROLL_STATE_DRAGGING);
+				}
+			}else{
+				if(onPageChangeListener!=null){
+	        		onPageChangeListener.onPageScrollStateChanged(OnPageChangeListener.SCROLL_STATE_IDLE);
+	    		}
 			}
+			
 		}
 		return true;
 	}
 	
 	private void vScroll(double yMove){
-		//确认上下页面是什么
+		
 		View currentView=viewList.get(position);
 		View upView=null;
 		View downView=null;
@@ -154,8 +164,8 @@ public class AViewPager extends FrameLayout{
 		}
 		
 		
-		if(yMove>0){//往上
-			if(upView!=null){//上页面向下
+		if(yMove>0){
+			if(upView!=null){
 				
 				ViewGroup.MarginLayoutParams currentParams=getMarginLayoutParams();
 				currentParams.topMargin=(int)yMove;
@@ -173,9 +183,13 @@ public class AViewPager extends FrameLayout{
 					willSelectedPosition=position-1;
 				}
 				
+				if(onPageChangeListener!=null){
+					float rate=currentParams.topMargin/(float)getHeight();
+					onPageChangeListener.onPageScrolled(position, rate, currentParams.topMargin);
+				}
 			}
-		}else if(yMove<0){//往下
-			if(downView!=null){//下页面向上
+		}else if(yMove<0){
+			if(downView!=null){
 				
 				ViewGroup.MarginLayoutParams currentParams=getMarginLayoutParams();
 				currentParams.bottomMargin=Math.abs((int)yMove);
@@ -192,6 +206,11 @@ public class AViewPager extends FrameLayout{
 				}else{
 					willSelectedPosition=position+1;
 				}
+				
+				if(onPageChangeListener!=null){
+					float rate=currentParams.bottomMargin/(float)getHeight();
+					onPageChangeListener.onPageScrolled(position, rate, currentParams.bottomMargin);
+				}
 			}
 			
 			
@@ -199,7 +218,7 @@ public class AViewPager extends FrameLayout{
 	}
 	
 	private void hScroll(double xMove){
-		//确认左右页面是什么
+		
 		View currentView=viewList.get(position);
 		View leftView=null;
 		View rightView=null;
@@ -211,8 +230,8 @@ public class AViewPager extends FrameLayout{
 		}
 		
 		
-		if(xMove>0){//往右
-			if(leftView!=null){//左页面向右
+		if(xMove>0){
+			if(leftView!=null){
 				
 				ViewGroup.MarginLayoutParams currentParams=getMarginLayoutParams();
 				currentParams.leftMargin=(int)xMove;
@@ -230,9 +249,13 @@ public class AViewPager extends FrameLayout{
 					willSelectedPosition=position-1;
 				}
 				
+				if(onPageChangeListener!=null){
+					float rate=currentParams.leftMargin/(float)getWidth();
+					onPageChangeListener.onPageScrolled(position, rate, currentParams.leftMargin);
+				}
 			}
-		}else if(xMove<0){//往左
-			if(rightView!=null){//右页面向左
+		}else if(xMove<0){
+			if(rightView!=null){
 				
 				ViewGroup.MarginLayoutParams currentParams=getMarginLayoutParams();
 				currentParams.rightMargin=Math.abs((int)xMove);
@@ -248,6 +271,11 @@ public class AViewPager extends FrameLayout{
 					willSelectedPosition=position;
 				}else{
 					willSelectedPosition=position+1;
+				}
+				
+				if(onPageChangeListener!=null){
+					float rate=currentParams.rightMargin/(float)getWidth();
+					onPageChangeListener.onPageScrolled(position, rate, currentParams.rightMargin);
 				}
 			}
 			
@@ -267,6 +295,10 @@ public class AViewPager extends FrameLayout{
 				addView(view);
 
 				this.position = position;
+				
+				if(onPageChangeListener!=null){
+					onPageChangeListener.onPageSelected(position);
+				}
 			}
 		}
 	}
@@ -290,11 +322,45 @@ public class AViewPager extends FrameLayout{
 				addView(inView);
 
 				this.position = position;
+				
+				if(onPageChangeListener!=null){
+					onPageChangeListener.onPageSelected(position);
+				}
 			}
 		}
 	}
 	
 	private ViewGroup.MarginLayoutParams getMarginLayoutParams(){
 		return new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT,FrameLayout.LayoutParams.MATCH_PARENT);
+	}
+	
+	OnPageChangeListener onPageChangeListener;
+	public void setOnPageChangeListener(OnPageChangeListener onPageChangeListener){
+		this.onPageChangeListener=onPageChangeListener;
+	}
+	
+	public interface OnPageChangeListener{
+		//0(END) 1(PRESS) 2(UP) 
+		/**
+	     * Indicates that the pager is in an idle, settled state. The current page
+	     * is fully in view and no animation is in progress.
+	     */
+	    public static final int SCROLL_STATE_IDLE = 0;
+	    
+	    /**
+	     * Indicates that the pager is currently being dragged by the user.
+	     */
+	    public static final int SCROLL_STATE_DRAGGING = 1;
+	    
+	    /**
+	     * Indicates that the pager is in the process of settling to a final position.
+	     */
+	    public static final int SCROLL_STATE_SETTLING = 2;
+		
+		public void onPageSelected(int position);
+		
+		public void onPageScrolled(int position,float positionOffset, int positionOffsetPixels);
+		
+		public void onPageScrollStateChanged(int state);
 	}
 }
